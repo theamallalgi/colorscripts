@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+
+# Directory containing the color scripts
+DIR_COLORSCRIPTS="./colorscripts"
+DIR_BLACKLIST="${DIR_COLORSCRIPTS}/blacklisted"
+
+# Ensure the blacklist directory exists
+mkdir -p "${DIR_BLACKLIST}"
+
+# Helper function: print help message
+function _help() {
+    cat <<EOF
+colorscripts - run various shell color scripts
+
+Usage: colorscript [OPTION] [SCRIPT NAME/INDEX]
+
+Options:
+  -h, --help, help              Print this help.
+  -l, --list, list              List all installed color scripts.
+  -r, --random, random          Run a random color script.
+  -e, --exec, exec              Run specified color script by SCRIPT NAME or INDEX.
+  -a, --all, all                Run all color scripts and list their SCRIPT NAMEs.
+  -b, --blacklist, blacklist    Blacklist a color script by SCRIPT NAME or INDEX.
+  -u, --unblacklist, unblacklist Unblacklist a color script by SCRIPT NAME or INDEX.
+EOF
+}
+
+# List installed scripts
+function _list() {
+    local index=1
+    for script in "${DIR_COLORSCRIPTS}"/*; do
+        [[ -f "$script" && ! "$script" =~ blacklisted ]] || continue
+        script_name=$(basename "$script")
+        echo "[$index] $script_name:"
+        ./"$script"
+        echo
+        ((index++))
+    done
+}
+
+# List blacklisted scripts
+function _list_blacklist() {
+    local index=1
+    for script in "${DIR_BLACKLIST}"/*; do
+        [[ -f "$script" ]] || continue
+        script_name=$(basename "$script")
+        echo "[$index] $script_name:"
+        ./"$script"
+        echo
+        ((index++))
+    done
+}
+
+# Run a random script
+function _random() {
+    scripts=($(find "${DIR_COLORSCRIPTS}" -maxdepth 1 -type f -not -name "blacklisted"))
+    count=${#scripts[@]}
+    if [[ $count -eq 0 ]]; then
+        echo "No color scripts available."
+        exit 1
+    fi
+    random_index=$((RANDOM % count))
+    exec "${scripts[$random_index]}"
+}
+
+# Execute a specific script by name or index
+function _exec() {
+    if [[ "$1" =~ ^[0-9]+$ ]]; then
+        script=$(find "${DIR_COLORSCRIPTS}" -maxdepth 1 -type f -not -name "blacklisted" | sed -n "${1}p")
+    else
+        script="${DIR_COLORSCRIPTS}/$1"
+    fi
+
+    if [[ -f "$script" ]]; then
+        exec "$script"
+    else
+        echo "Error: Script not found."
+        exit 1
+    fi
+}
+
+# Run all scripts
+function _run_all() {
+    for script in "${DIR_COLORSCRIPTS}"/*; do
+        [[ -f "$script" ]] || continue
+        echo "$(basename "$script"):"
+        "$script"
+        echo
+    done
+}
+
+# Blacklist a script
+function _blacklist() {
+    if [[ "$1" =~ ^[0-9]+$ ]]; then
+        script=$(find "${DIR_COLORSCRIPTS}" -maxdepth 1 -type f -not -name "blacklisted" | sed -n "${1}p")
+    else
+        script="${DIR_COLORSCRIPTS}/$1"
+    fi
+
+    if [[ -f "$script" ]]; then
+        mv "$script" "${DIR_BLACKLIST}"
+        echo "Script $(basename "$script") has been blacklisted."
+    else
+        echo "Error: Script not found."
+    fi
+}
+
+# Unblacklist a script
+function _unblacklist() {
+    script="${DIR_BLACKLIST}/$1"
+    if [[ -f "$script" ]]; then
+        mv "$script" "${DIR_COLORSCRIPTS}"
+        echo "Script $(basename "$script") has been unblacklisted."
+    else
+        echo "Error: Script not found in blacklist."
+    fi
+}
+
+# Parse command-line arguments
+case "$1" in
+    -h|--help|help)
+        _help
+        ;;
+    -l|--list|list)
+        _list
+        ;;
+    -r|--random|random)
+        _random
+        ;;
+    -e|--exec|exec)
+        _exec "$2"
+        ;;
+    -a|--all|all)
+        _run_all
+        ;;
+    -b|--blacklist|blacklist)
+        _blacklist "$2"
+        ;;
+    -u|--unblacklist|unblacklist)
+        _unblacklist "$2"
+        ;;
+    *)
+        echo "Invalid option. Use -h or --help for usage."
+        exit 1
+        ;;
+esac
