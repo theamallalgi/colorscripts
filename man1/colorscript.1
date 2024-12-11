@@ -1,0 +1,65 @@
+.TH COLORSCRIPT 1 "December 2024" "colorscript v1.0" "User Commands"
+.SH NAME
+colorscript \- run various shell color scripts
+.SH SYNOPSIS
+.B colorscript
+[\fIOPTION\fR] [\fISCRIPT NAME\fR]
+.SH DESCRIPTION
+colorscript is a command-line tool for running shell color scripts, a collection of terminal color scripts that provide ANSI art or colorful terminal outputs. You can run specific scripts by name or index, get a random script, list available scripts, and manage blacklisted scripts.
+.SH OPTIONS
+.TP
+.B \-h, \-\-help, help
+Display this help message and exit.
+.TP
+.B \-l, \-\-list, list
+List all installed color scripts with their corresponding name and ANSI art.
+.TP
+.B \-r, \-\-random, random
+Run a random color script from the available scripts.
+.TP
+.B \-e, \-\-exec, exec
+Run the specified color script by either SCRIPT NAME or INDEX.
+.TP
+.B \-a, \-\-all, all
+Run all color scripts and display their names along with their ANSI art.
+.TP
+.B \-b, \-\-blacklist, blacklist
+Blacklist the specified color script by name or index, moving it to a "blacklisted" folder.
+.TP
+.B \-u, \-\-unblacklist, unblacklist
+Unblacklist the specified color script, moving it back to the main directory.
+.SH FILES
+/usr/bin/colorscript
+The colorscript executable binary.
+.TP
+/opt/shell-color-scripts
+The directory containing the installed color scripts.
+.TP
+/opt/shell-color-scripts/blacklisted
+The directory containing the blacklisted scripts.
+.SH EXAMPLES
+.TP
+.B colorscript \-r
+Run a random shell color script. This can be added to your shell configuration to get a random color script every time you open a terminal.
+.TP
+.B colorscript \-l
+List all installed shell color scripts, showing their index and name.
+.TP
+.B colorscript \-e 2
+Run the color script with index 2.
+.TP
+.B colorscript \-e red.sh
+Run the color script named "red.sh".
+.TP
+.B colorscript \-b red.sh
+Blacklist the "red.sh" color script by moving it to the blacklisted directory.
+.TP
+.B colorscript \-u red.sh
+Unblacklist the "red.sh" color script, moving it back to the main directory.
+.TP
+.B colorscript \-a
+Run all installed color scripts, displaying their names along with their ANSI art.
+.SH AUTHOR
+Amal Lalgi (https://github.com/theamallalgi/colorscripts/)
+.SH SEE ALSO
+bash(1), zsh(1), fish(1), terminal(1)
