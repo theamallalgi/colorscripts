@@ -51,7 +51,7 @@ here's a list of available commands
 scoop install colorscript # install and setup colorscripts
 ```
 
-### 2. Build from Source
+### 2. Use `install.sh` script
 
 clone the repo, and proceed to the directory
 ```bash
@@ -59,7 +59,25 @@ git clone https://github.com/theamallalgi/colorscripts.git # clone git repo
 cd colorscripts # change directory to colorscripts/
 ```
 
-make sure that make is installed on your os
+run the install script with sudo privileges
+```sh
+sudo ./install.sh # run install script
+```
+
+run the cli for the first time
+```sh
+colorscript --random # displays a random colorscript
+```
+
+### 3. Build from Source
+
+clone the repo, and proceed to the directory
+```bash
+git clone https://github.com/theamallalgi/colorscripts.git # clone git repo
+cd colorscripts # change directory to colorscripts/
+```
+
+make sure that `make` is installed on your os
 ```sh
 make install # build and install colorscripts
 ```
