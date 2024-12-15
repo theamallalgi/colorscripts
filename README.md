@@ -12,7 +12,8 @@ a handy cli tool that will help you show off your terminal/shell with beautiful 
 refer to my [dotfiles](https://github.com/theamallalgi/dotfiles) for the setup.
 <details>
     <summary>here's a bunch of other example shots of the colorscripts in action.</summary>
-
+</br>
+    
 ![example-shot-2](https://github.com/theamallalgi/colorscripts/blob/main/dependencies/shot-2.jpg?raw=true)
 
 ![example-shot-3](https://github.com/theamallalgi/colorscripts/blob/main/dependencies/shot-3.jpg?raw=true)
