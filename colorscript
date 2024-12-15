@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Directory containing the color scripts
-DIR_COLORSCRIPTS="./colorscripts"
+# Define directories
+DIR_COLORSCRIPTS="/usr/share/colorscripts"
 DIR_BLACKLIST="${DIR_COLORSCRIPTS}/blacklisted"
 
 # Ensure the blacklist directory exists
@@ -10,50 +10,38 @@ mkdir -p "${DIR_BLACKLIST}"
 # Helper function: print help message
 function _help() {
     cat <<EOF
-colorscripts - run various shell color scripts
+$(tput bold)colorscripts$(tput sgr0) - run various shell color scripts
 
-Usage: colorscript [OPTION] [SCRIPT NAME/INDEX]
+$(tput bold)Usage:$(tput sgr0)
+  colorscript [OPTION] [SCRIPT NAME/INDEX]
 
-Options:
-  -h, --help, help              Print this help.
-  -l, --list, list              List all installed color scripts.
-  -r, --random, random          Run a random color script.
-  -e, --exec, exec              Run specified color script by SCRIPT NAME or INDEX.
-  -a, --all, all                Run all color scripts and list their SCRIPT NAMEs.
-  -b, --blacklist, blacklist    Blacklist a color script by SCRIPT NAME or INDEX.
-  -u, --unblacklist, unblacklist Unblacklist a color script by SCRIPT NAME or INDEX.
+$(tput bold)Options:$(tput sgr0)
+  $(tput setaf 2)-h, --help, help$(tput sgr0)                   Print this help.
+  $(tput setaf 2)-l, --list, list$(tput sgr0)                   List all installed color scripts.
+  $(tput setaf 2)-r, --random, random$(tput sgr0)               Run a random color script.
+  $(tput setaf 2)-e, --exec, exec$(tput sgr0)                   Run specified color script by SCRIPT NAME or INDEX.
+  $(tput setaf 2)-a, --all, all$(tput sgr0)                     Run all color scripts and list their SCRIPT NAMEs.
+  $(tput setaf 2)-b, --blacklist, blacklist$(tput sgr0)         Blacklist a color script by SCRIPT NAME or INDEX.
+  $(tput setaf 2)-u, --unblacklist, unblacklist$(tput sgr0)     Unblacklist a color script by SCRIPT NAME or INDEX.
+  $(tput setaf 2)-v, --version, version$(tput sgr0)             Print version information.
 EOF
 }
 
 # List installed scripts
 function _list() {
+    echo "Installed scripts:"
     local index=1
     for script in "${DIR_COLORSCRIPTS}"/*; do
         [[ -f "$script" && ! "$script" =~ blacklisted ]] || continue
-        script_name=$(basename "$script")
-        echo "[$index] $script_name:"
-        ./"$script"
-        echo
+        echo "[$index] $(basename "$script")"
         ((index++))
     done
-}
-
-# List blacklisted scripts
-function _list_blacklist() {
-    local index=1
-    for script in "${DIR_BLACKLIST}"/*; do
-        [[ -f "$script" ]] || continue
-        script_name=$(basename "$script")
-        echo "[$index] $script_name:"
-        ./"$script"
-        echo
-        ((index++))
-    done
+    echo
 }
 
 # Run a random script
 function _random() {
-    scripts=($(find "${DIR_COLORSCRIPTS}" -maxdepth 1 -type f -not -name "blacklisted"))
+    scripts=($(find "${DIR_COLORSCRIPTS}" -maxdepth 1 -type f ! -path "${DIR_BLACKLIST}/*"))
     count=${#scripts[@]}
     if [[ $count -eq 0 ]]; then
         echo "No color scripts available."
@@ -66,7 +54,7 @@ function _random() {
 # Execute a specific script by name or index
 function _exec() {
     if [[ "$1" =~ ^[0-9]+$ ]]; then
-        script=$(find "${DIR_COLORSCRIPTS}" -maxdepth 1 -type f -not -name "blacklisted" | sed -n "${1}p")
+        script=$(find "${DIR_COLORSCRIPTS}" -maxdepth 1 -type f ! -path "${DIR_BLACKLIST}/*" | sed -n "${1}p")
     else
         script="${DIR_COLORSCRIPTS}/$1"
     fi
@@ -82,7 +70,7 @@ function _exec() {
 # Run all scripts
 function _run_all() {
     for script in "${DIR_COLORSCRIPTS}"/*; do
-        [[ -f "$script" ]] || continue
+        [[ -f "$script" && ! "$script" =~ blacklisted ]] || continue
         echo "$(basename "$script"):"
         "$script"
         echo
@@ -92,7 +80,7 @@ function _run_all() {
 # Blacklist a script
 function _blacklist() {
     if [[ "$1" =~ ^[0-9]+$ ]]; then
-        script=$(find "${DIR_COLORSCRIPTS}" -maxdepth 1 -type f -not -name "blacklisted" | sed -n "${1}p")
+        script=$(find "${DIR_COLORSCRIPTS}" -maxdepth 1 -type f ! -path "${DIR_BLACKLIST}/*" | sed -n "${1}p")
     else
         script="${DIR_COLORSCRIPTS}/$1"
     fi
@@ -117,6 +105,7 @@ function _unblacklist() {
 }
 
 # Parse command-line arguments
+VERSION="1.0.0"
 case "$1" in
     -h|--help|help)
         _help
@@ -138,6 +127,9 @@ case "$1" in
         ;;
     -u|--unblacklist|unblacklist)
         _unblacklist "$2"
+        ;;
+    -v|--version|version)
+        echo "colorscripts version $VERSION"
         ;;
     *)
         echo "Invalid option. Use -h or --help for usage."
