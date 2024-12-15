@@ -1,34 +1,35 @@
 #!/usr/bin/env bash
 
-# Define installation directories
+# define installation directories
 BIN_DIR="/usr/bin"
-LOCAL_BIN_DIR="/usr/bin"
+LOCAL_BIN_DIR="/usr/local/bin"
 SHARE_DIR="/usr/share/colorscripts"
 
-# Ensure the script is run as root
-if [[ $EUID -ne 0 ]]; then
-    echo "This script must be run as root. Try using sudo." >&2
-    exit 1
-fi
+# ensure the script is run as root
+# if [[ $EUID -ne 0 ]]; then
+    # echo "[!] this script must be run as root. Try using sudo." >&2
+    # exit 1
+# fi
 
-# Remove existing installation if present
-echo "Removing previous installation, if any..."
-rm -rf "${SHARE_DIR}"
-rm -f "${BIN_DIR}/colorscript"
-rm -f "${LOCAL_BIN_DIR}/colorscript"
+# remove existing installation if present
+echo "[→] removing previous installation, if any..."
+sudo rm -rf "${SHARE_DIR}"
+sudo rm -f "${BIN_DIR}/colorscript"
+sudo rm -f "${LOCAL_BIN_DIR}/colorscript"
 
-# Create necessary directories
-echo "Creating directories..."
-mkdir -p "${SHARE_DIR}"
+# create necessary directories
+echo "[→] creating directories..."
+sudo mkdir -p "${SHARE_DIR}"
 
-# Copy files to their respective locations
-echo "Copying files..."
-cp -r ./scripts/* "${SHARE_DIR}/"
-cp ./colorscript "${BIN_DIR}/colorscript"
-cp ./colorscript "${LOCAL_BIN_DIR}/colorscript"
+# copy files to their respective locations
+echo "[→] copying files..."
+sudo cp -rf ./scripts/* "${SHARE_DIR}/"
+sudo cp ./colorscript "${BIN_DIR}/colorscript"
+sudo cp ./colorscript "${LOCAL_BIN_DIR}/colorscript"
 
-# Ensure the colorscript file is executable
+# ensure the colorscript file is executable
+echo "[→] setting executable permissions..."
 chmod +x "${BIN_DIR}/colorscript"
 chmod +x "${LOCAL_BIN_DIR}/colorscript"
 
-echo "Installation completed successfully!"
+echo "[*] installation completed successfully!"
