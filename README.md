@@ -41,7 +41,8 @@ here's a list of available commands
 
 ## Installation
 
-- currently there are 2 ways to install the cli
+- currently there are 3 ways to install the cli
+- use the `install.sh` script
 - scoop (currently not working, as we are waiting for the package approval from scoop)
 - build it from source (with make)
 
